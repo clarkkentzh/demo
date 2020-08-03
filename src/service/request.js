@@ -29,7 +29,7 @@ service.interceptors.response.use(
     } else {
       msg = data.message
     }
-    message.error(msg,2)
+    // message.error(msg,2)
     return Promise.reject(error)
   }
 )
