@@ -27,6 +27,7 @@ class App  extends React.Component {
                 {id: '2', title: '案件'},
                 {id: '3', title: '智能派单'},
                 {id: '4', title: '知识图谱'},
+                {id: '5', title: '搜索'},
             ],
             selectTab: '3',
             visibleModal:false,
@@ -73,7 +74,11 @@ class App  extends React.Component {
             ],
             dataList: {},
             searchValue: '',
-            searchDataList: []
+            searchDataList: [],
+            departList:[
+                {title: '区人力资源社会保障局'},
+                {title: '区北部开发办'},
+            ]
         }
     }
 
@@ -142,7 +147,6 @@ class App  extends React.Component {
             method: 'post',
             data: obj
         }).then((reponse)=>{
-            console.log('fffff',reponse); 
             if(reponse.nlp && reponse.nlp[0] && reponse.nlp[0].feed.relate){
                 this.setState({
                     searchDataList: reponse.nlp[0].feed.relate
@@ -151,6 +155,17 @@ class App  extends React.Component {
         }).catch((err)=>{
             console.log('error', err);
         })
+    }
+
+    replaceFunc(arg){
+        if(this.state.searchValue){
+            let reg = new RegExp("(" + this.state.searchValue + ")", "g");
+            arg = arg.replace(reg, `<span class='query_span'>${this.state.searchValue}</span>`);
+        }
+        return (
+            <div className="textarea_show"  dangerouslySetInnerHTML={{__html:arg }}>
+            </div>
+        )
     }
 
     inputSearch(){
@@ -175,13 +190,13 @@ class App  extends React.Component {
                         </div>
                     </div>
 
-                        <span style={{fontSize:'12px', marginTop: '10px'}}>为您找到相关结果{searchDataList.length}个</span>
+                    <span style={{fontSize:'12px', marginTop: '10px'}}>为您找到相关结果{searchDataList.length}个</span>
                 </div>
 
                 {searchDataList.map((item,index)=>{
                     let score = 0;
                     if(item.score){
-                        score = item.score.toFixed(2) * 100
+                        score = item.score
                     }
                     return (
                         <div key={index} className="center_item">
@@ -199,9 +214,10 @@ class App  extends React.Component {
                                 </div>
                             </div>
                             <div className="row" style={{justifyContent:"space-between",alignItems:'flex-start', width: '100%', marginTop: '12px'}}>
-                                <div className="textarea_show">
+                                {/* <div className="textarea_show">
                                     {item.text}
-                                </div>
+                                </div> */}
+                                {this.replaceFunc(item.text)}
 
                                 <div style={{display:'flex',flexDirection:'column', alignItems:'center', justifyContent:'center'}}>
                                     <div style={{
@@ -246,22 +262,24 @@ class App  extends React.Component {
                             {tabList.map((item,index)=>{
                                 return (
                                     <div className={selectTab == item.id ? "tab_item_select":"tab_item"} key={index} onClick={()=>{
-                                        this.setState({
-                                            selectTab: '3',
-                                            dataList: [],
-                                            searchDataList: []
-                                        })
+                                        if(item.id == '3' || item.id == '5'){
+                                            this.setState({
+                                                selectTab: item.id,
+                                                dataList: [],
+                                                searchDataList: []
+                                            })
+                                        }
                                     }}>{item.title}</div>
                                 )
                             })}
-                            <div className="right_input" onClick={()=>{
+                            {/* <div className="right_input" onClick={()=>{
                                 this.setState({
                                     selectTab: '5'
                                 })
                             }}>
                                 <span>请输入您要查找的关键词</span>
                                 <img style={{width: '18px', height: '18px'}} src={require('./img/search_white.png')} alt="img"/>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </header>
@@ -300,7 +318,7 @@ class App  extends React.Component {
 
                 <div className="center_item">
                     
-                    <div className="row" style={{justifyContent:"space-between", width: '1039px'}}>
+                    {/* <div className="row" style={{justifyContent:"space-between", width: '1039px'}}>
                         <div className="row">
                             <Checkbox />
                             <span style={{fontSize:'12px',color:'#333333', marginLeft: '8px'}}>2020-07-25</span>
@@ -313,7 +331,7 @@ class App  extends React.Component {
                             <span style={{fontSize:'12px',color:'#858585', marginLeft: '40px'}}>电话：</span>
                             <span style={{fontSize:'12px',color:'#333333'}}>12542548525</span>
                         </div>
-                    </div>
+                    </div> */}
                     <div className="row" style={{justifyContent:"space-between",alignItems:'flex-start', width: '100%', marginTop: '12px'}}>
                         <TextArea 
                             style={{width: '1039px',height: '89px'}}
@@ -359,7 +377,7 @@ class App  extends React.Component {
                         {dataList.pred_label.map((item,index)=>{
                             let score = 0;
                             if(dataList.score && dataList.score[index]){
-                                score = dataList.score[index].toFixed(2) * 100
+                                score = dataList.score[index]
                             }
                             return (
                                 <div key={index} className="recom_item">
@@ -403,7 +421,13 @@ class App  extends React.Component {
                   <div className="column_center">
                     {this.state.list1.map((item,index)=>{
                       return (
-                        <span key={index}>{item.title}</span>
+                        <span key={index} onClick={()=>{
+                            let list = [...this.state.departList];
+                            list.push(item)
+                            this.setState({
+                                departList: list
+                            })
+                        }}>{item.title}</span>
                       )
                     })}
                   </div>
@@ -414,7 +438,13 @@ class App  extends React.Component {
                 <div className="column_center">
                   {this.state.list2.map((item,index)=>{
                     return (
-                      <span key={index}>{item.title}</span>
+                      <span key={index} onClick={()=>{
+                        let list = [...this.state.departList];
+                        list.push(item)
+                        this.setState({
+                            departList: list
+                        })
+                    }}>{item.title}</span>
                     )
                   })}
                 </div>
@@ -425,7 +455,13 @@ class App  extends React.Component {
                 <div className="column_center">
                   {this.state.list3.map((item,index)=>{
                     return (
-                      <span key={index}>{item.title}</span>
+                      <span key={index} onClick={()=>{
+                          let list = [...this.state.departList];
+                          list.push(item)
+                          this.setState({
+                              departList: list
+                          })
+                      }}>{item.title}</span>
                     )
                   })}
                 </div>
@@ -436,7 +472,13 @@ class App  extends React.Component {
                   <div className="column_center">
                     {this.state.list4.map((item,index)=>{
                       return (
-                        <span key={index}>{item.title}</span>
+                        <span key={index} onClick={()=>{
+                            let list = [...this.state.departList];
+                            list.push(item)
+                            this.setState({
+                                departList: list
+                            })
+                        }}>{item.title}</span>
                       )
                     })}
                   </div>
@@ -445,23 +487,21 @@ class App  extends React.Component {
   
           <div style={{marginLeft: '20px'}}>
             <div style={{fontSize:"12px", color: '#000000',marginTop: '15px', marginBottom: '8px'}}>选取单位</div>
-            <div className="row">
-              <div className="modal_titbtn">
-                    <span style={{fonts: '14px', color: '#23A490', marginRight: '10px'}}>区人力资源社会保障局</span>
-                    <Icon type="close" style={{color: '#dadada'}}/>
-              </div>
-              <div className="modal_titbtn">
-                    <span style={{fonts: '14px', color: '#23A490', marginRight: '10px'}}>区北部开发办</span>
-                    <Icon type="close" style={{color: '#dadada'}}/>
-              </div>
-              <div className="modal_titbtn">
-                    <span style={{fonts: '14px', color: '#23A490', marginRight: '10px'}}>区北部开发办</span>
-                    <Icon type="close" style={{color: '#dadada'}}/>
-              </div>
-              <div className="modal_titbtn">
-                    <span style={{fonts: '14px', color: '#23A490', marginRight: '10px'}}>区北部开发办</span>
-                    <Icon type="close" style={{color: '#dadada'}}/>
-              </div>
+            <div className="row" style={{flexWrap:'wrap'}}>
+                {this.state.departList.map((item,index)=>{
+                    return (
+                        <div key={index} className="modal_titbtn">
+                              <span style={{fonts: '14px', color: '#23A490', marginRight: '10px'}}>{item.title}</span>
+                              <Icon type="close" style={{color: '#dadada',cursor:'pointer'}} onClick={()=>{
+                                  let list = [...this.state.departList];
+                                  list.splice(index,1);
+                                  this.setState({
+                                      departList: list
+                                  })
+                              }}/>
+                        </div>
+                    )
+                })}
             </div>
           </div>
   

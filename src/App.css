@@ -53,7 +53,7 @@
 }
 
 .input_sty{
-  width: 460px;
+  width: 660px;
   height: 50px;
   border-radius: 0;
   border-top-left-radius: 4px;
@@ -75,7 +75,7 @@
 .center_top_s{
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   border-bottom: 1px solid #A3DED5;
   padding: 28px 14px;
 }
@@ -293,6 +293,12 @@
   
 }
 
+.query_span{
+  margin:0;
+  color: #00C7A8;
+  font-weight: 600;
+}
+
 .modal_titbtn{
   border-radius: 4px;
   cursor: pointer;
@@ -303,6 +309,7 @@
   justify-content: center;
   border: 1px solid #d4d4d4;
   margin-right: 10px;
+  margin-bottom: 10px;
 }
 
 .column_center{
