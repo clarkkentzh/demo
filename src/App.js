@@ -194,6 +194,11 @@ class App  extends React.Component {
                 </div>
 
                 {searchDataList.map((item,index)=>{
+                    if(!item || item == 0 || (item instanceof Array && !item.length)){
+                        return(
+                            <div key={index}></div>
+                        )
+                    }
                     let score = 0;
                     if(item.score){
                         score = item.score
@@ -206,7 +211,7 @@ class App  extends React.Component {
                                     <span style={{fontSize:'12px',color:'#858585', marginLeft: '20px'}}>受理机构：</span>
                                     <span style={{fontSize:'12px',color:'#333333', minWidth: '100px'}}>{item.caseDepartment}</span>
                                     <span style={{fontSize:'12px',color:'#858585', marginLeft: '20px'}}>相似度：</span>
-                                    <span style={{fontSize:'12px',color:'#333333'}}>{score + '%'}</span>
+                                    <span style={{fontSize:'20px',color:'#333333', fontWeight: '600'}}>{score + '%'}</span>
                                 </div>
                                 <div className="row">
                                     <span style={{fontSize:'12px',color:'#858585', marginLeft: '40px'}}>电话：</span>
