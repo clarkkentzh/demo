@@ -1,10 +1,12 @@
 import React from 'react';
 import logo from './logo.svg';
-import {Input,Button,Checkbox,Modal,Icon, message} from 'antd'
+import {Input,Button,Modal,Icon, message,Select} from 'antd'
 import request from './service/request';
+import ReactEcharts from 'echarts-for-react';
 import moment from 'moment'
 import './App.css';
 const { TextArea } = Input;
+const { Option } = Select;
 
 const objNum = {
     1: '一',
@@ -18,13 +20,53 @@ const objNum = {
     9: '九',
     10: '十',
 }
+
+const relaList = [
+    {id: 1, title: '承办单位'},
+    {id: 2, title: '案件主题'},
+    {id: 3, title: '结案意见'},
+    {id: 4, title: '案件类别'},
+];
+
+const options = {
+    title: {
+        text: '来件来源'
+    },
+    tooltip: {
+        trigger: 'axis',
+        show:true,
+        axisPointer:{
+            type: 'none'
+        }
+    },
+    xAxis: {
+        type: 'category',
+        data: []
+    },
+    yAxis: {
+        type: 'value'
+    },
+    color: '#3474E5',    
+    series: [{
+        data: [],
+        type: 'bar'
+    }]
+}
 class App  extends React.Component {
     constructor(props) {
         super(props)
         this.state={
+            optionOne: options,
+            optionTwo: options,
+            selectRela: [
+                '承办单位',
+                '案件主题',
+                '结案意见',
+                '案件类别'
+            ],
             tabList: [
                 {id: '1', title: '指数'},
-                {id: '2', title: '案件'},
+                {id: '2', title: '案件管理'},
                 {id: '3', title: '智能派单'},
                 {id: '4', title: '知识图谱'},
                 {id: '5', title: '搜索'},
@@ -80,6 +122,20 @@ class App  extends React.Component {
                 {title: '区北部开发办'},
             ]
         }
+    }
+
+    componentWillMount(){
+        let objOne = JSON.parse(JSON.stringify(options));
+        let objTwo = JSON.parse(JSON.stringify(options));
+        objOne.xAxis.data = ['登记单', '直派街镇', '电话', '人民网地', '电交件', '政务微博', '外网', '微博','行政大厅','行风正风','文明办'];
+        objOne.series[0].data = [116779, 7281, 3921, 1653, 1588, 760, 197,107,79,25,1];
+        objTwo.title.text = '办理状态';
+        objTwo.xAxis.data = ['转办结案', '直接回复', '承办中', '退回', '直办结案', '转办待结案', '结案审批不通过', '结案待审批','待分拣'];
+        objTwo.series[0].data = [121826, 4922, 2885, 992, 984, 374, 230,164,26];
+        this.setState({
+            optionOne: objOne,
+            optionTwo: objTwo,
+        })
     }
 
     componentWillUnmount(){
@@ -255,6 +311,32 @@ class App  extends React.Component {
         )
     }
 
+    getKnowMap(cypher){
+        var config = {
+            container_id: "viz",
+            server_url: "bolt://192.168.51.109:7687",
+            server_user: "neo4j",
+            server_password: "123456",
+            labels: {
+                "banli": {
+                    caption: "user_key",
+                    size: "pagerank",
+                    community: "community"
+                }
+            },
+            relationships: {
+                "tail_entity": {
+                    caption: false,
+                    thickness: "count"
+                }
+            },
+            initial_cypher: cypher
+        }
+
+        var viz = new window.NeoVis.default(config);
+        viz.render();
+    }
+
     render(){
         const {tabList,selectTab} = this.state;
         return (
@@ -267,11 +349,20 @@ class App  extends React.Component {
                             {tabList.map((item,index)=>{
                                 return (
                                     <div className={selectTab == item.id ? "tab_item_select":"tab_item"} key={index} onClick={()=>{
-                                        if(item.id == '3' || item.id == '5'){
+                                        if(item.id == '3' || item.id == '5' || item.id == '1'){
+                                            this.setState({
+                                                selectTab: item.id,
+                                                dataList: [],
+                                                searchDataList: [],
+                                                knowValue: ''
+                                            })
+                                        }else if(item.id == '4'){
                                             this.setState({
                                                 selectTab: item.id,
                                                 dataList: [],
                                                 searchDataList: []
+                                            },()=>{
+                                                this.getKnowMap("MATCH p=()-[]->() RETURN p")
                                             })
                                         }
                                     }}>{item.title}</div>
@@ -290,11 +381,114 @@ class App  extends React.Component {
                 </header>
 
             
-                {selectTab == '3' ? this.inputRender() : this.inputSearch()}
-                
+                {selectTab == '1' ? this.echartRender() : selectTab == '3' ? this.inputRender() : selectTab == '5' ? this.inputSearch() : null}
+                {this.knowMap()}
                 {this.modalRender()}
             </div>
         );
+    }
+
+    echartRender(){
+        return (
+            <div className="container" style={{
+                display:'flex',
+                flexDirection:'column',
+                alignItems:'center',
+                padding: '20px'
+            }}>
+                <ReactEcharts style={{width: '100%',height: '500px'}} option={this.state.optionOne}/>
+                <ReactEcharts style={{width: '100%',height: '500px'}} option={this.state.optionTwo}/>
+            </div>
+        )
+    }
+
+    knowMap(){
+        const {selectTab,knowValue,selectRela} = this.state;
+        return (
+            <div style={{
+                display:'flex', flexDirection: 'column',
+                width: selectTab == '4' ? '1201px':'0px',
+                height: selectTab == '4' ? 'calc(100vh - 62px)':'0px',
+                backgroundColor:'#fff',
+                overflow: 'auto'
+            }}>
+                {selectTab == '4' ?
+                <div style={{
+                    padding: '20px',
+                    borderBottom: '1px solid #dddddd',
+
+                }}>
+                    <div className="row" style={{
+                        marginBottom: '10px'
+                    }}>
+                        <span style={{marginRight: '10px', fontSize:'14px', color: '#333'}}>投诉人：</span>
+                        <Input
+                        placeholder="请输入投诉人"
+                        allowClear
+                        onChange={(e)=>{
+                            this.setState({
+                                knowValue: e.target.value
+                            })
+                        }}
+                        value={knowValue}
+                        style={{
+                            width: '300px',
+                            marginRight: '20px',
+                        }}
+                        />
+                        <span style={{marginRight: '10px', fontSize:'14px', color: '#333'}}>关系：</span>
+                        <Select
+                            mode="multiple"
+                            style={{ width: '400px' }}
+                            placeholder="请选择关系"
+                            onChange={(value)=>{
+                                this.setState({
+                                    selectRela: value
+                                })
+                            }}
+                            optionLabelProp="label"
+                            value={selectRela}
+                        >
+                            {relaList.map((item,index)=>{
+                                return (
+                                    <Option key={index} value={item.title} label={item.title}>{item.title}</Option>
+                                )
+                            })}
+                        </Select>
+                    </div>
+
+                    <div className="row" style={{
+                        marginBottom: '20px'
+                    }}>
+                        <span style={{marginRight: '10px', fontSize:'14px', color: '#999999'}}>例如：4bf77629-9188-38ca-ac48-d09a09ef451f</span>
+                    </div>
+                    
+                    <Button
+                            type="primary"
+                            onClick={()=>{
+                                if(!knowValue){
+                                    this.getKnowMap("MATCH p=()-[]->() RETURN p")
+                                }else if(!selectRela.length){
+                                    message.warning('请选择关系')
+                                    return;
+                                }else {
+                                    let argStr = '';
+                                    for(let i = 0; i < selectRela.length; i++){
+                                        argStr = argStr ? `${argStr}|\`${selectRela[i]}\`` : `${argStr}\`${selectRela[i]}\``;
+                                    }
+                                    let str = `MATCH data=(c:caller{name:'${knowValue}'})-[r:案件详情]->(n:appeal_content)-[re:${argStr}]->(nn) return data`;
+                                    this.getKnowMap(str)
+                                }
+                            }}
+                    >搜索</Button>
+
+                </div>:null}
+                <div id="viz" style={{
+                    width: selectTab == '4' ? '100%' : '0px',
+                    height: selectTab == '4' ? '700px' : '0px',
+                }}></div>
+            </div>
+        )
     }
 
     inputRender(){
