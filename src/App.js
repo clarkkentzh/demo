@@ -200,7 +200,7 @@ class App  extends React.Component {
         let obj = {
             query: searchValue,
             search_type:"ES",
-            search_id:"jiesu2020-07-16",
+            search_id:"jiesu2020-08-28",
             dicturl:"http://172.16.77.106:6209/keyword_0710.dict",
             sn:"nlp_ai_capacity.1583286523951",
             user_semantics:{
