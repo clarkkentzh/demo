@@ -1,6 +1,6 @@
 import React from 'react';
 import logo from './logo.svg';
-import {Input,Button,Modal,Icon, message,Select} from 'antd'
+import {Input,Button,Modal,Icon, message,Select,Table} from 'antd'
 import request from './service/request';
 import ReactEcharts from 'echarts-for-react';
 import moment from 'moment'
@@ -20,6 +20,29 @@ const objNum = {
     9: '九',
     10: '十',
 }
+
+const dataSource = [
+    {num: 12, id: '89519758-e448-3900-bc12-a680d7a1dc90', name: '张玲'},
+    {num: 12, id: '7bcd24ae-0479-3826-8872-c301ff16e5cb', name: '李小冉'},
+    {num: 9, id: '497e7268-2577-3563-8db3-2a11b97cd96a', name: '赵山川'},
+    {num: 6, id: 'eb98423e-433c-321d-8eed-d702395b5c9f', name: '陈辰'},
+    {num: 5, id: '69780052-f414-3337-9d28-a3a8c291c2a6', name: '李鹏飞'},
+    {num: 5, id: '52d2bf9e-6343-3682-9ea0-44d3bf78f4ec', name: '胡伟伟'},
+    {num: 5, id: 'eccc207c-5125-36c6-85a3-00d3c70399b1', name: '马飞腾'},
+    {num: 5, id: 'f77e92ce-f4ad-37b1-8f31-47812d67fd2c', name: '王聪聪'},
+    {num: 4, id: '99a2366c-a4b2-3779-8a66-651d9b1dfafa', name: '万鑫'},
+    {num: 4, id: 'ea61dc67-3592-32a9-b38e-625f4c749e03', name: '李振'},
+    {num: 4, id: '7034e3cb-d88d-396d-8dce-5993b33c706e', name: '王睿'},
+    {num: 4, id: '65c31403-038c-30f1-b82a-4adcbb0bd2ac', name: '刘鹤'},
+    // {num: 4, id: 'f2ca8e5e-cc30-32fb-9b94-c2cb7770ca83', name: '张爱玲'},
+    // {num: 3, id: 'e1b64dda-aa47-399b-b89c-8ea5131df3a8', name: '张嘉莉'},
+    // {num: 3, id: 'f97d6aaa-5cb9-35a0-8f1e-69c8d5a6a6ec', name: '王博'},
+    // {num: 3, id: '0de8d62b-a520-3ff3-8ebe-768b86e0f549', name: '王子鑫'},
+    // {num: 3, id: 'e083b8f4-4f49-32aa-8117-b7be3731e493', name: '刘振飞'},
+    // {num: 2, id: 'dd5912bc-ac97-3d83-97b9-0ccf082c6822', name: '赵刚'},
+    // {num: 2, id: 'ace17c9c-7b5e-3401-bde0-d44cf3a3a44d', name: '李莉'},
+    // {num: 2, id: '14e62f6d-77ae-3c85-9908-971cc28e8018', name: '李景涛'}
+];
 
 const relaList = [
     {id: 1, title: '承办单位'},
@@ -402,8 +425,42 @@ class App  extends React.Component {
         )
     }
 
+    dealArgStr(args){
+        const {selectRela} = this.state;
+        let argStr = '';
+        for(let i = 0; i < selectRela.length; i++){
+            argStr = argStr ? `${argStr}|\`${selectRela[i]}\`` : `${argStr}\`${selectRela[i]}\``;
+        }
+        let str = `MATCH data=(c:caller{name:'${args}'})-[r:案件详情]->(n:appeal_content)-[re:${argStr}]->(nn) return data`;
+        return str
+    }
+
     knowMap(){
         const {selectTab,knowValue,selectRela} = this.state;
+          
+        const columns = [
+            {
+                title: '排名',
+                dataIndex: 'index',
+                key: 'index',
+                align: 'center',
+                render: (text,record,index)=>{
+                    return <span>{index+1}</span>
+                }
+            },
+            {
+                title: '诉求人姓名',
+                dataIndex: 'name',
+                key: 'name',
+                align: 'center'
+            },
+            {
+                title: '案件量',
+                dataIndex: 'num',
+                key: 'num',
+                align: 'center'
+            },
+        ];
         return (
             <div style={{
                 display:'flex', flexDirection: 'column',
@@ -460,7 +517,7 @@ class App  extends React.Component {
                     <div className="row" style={{
                         marginBottom: '20px'
                     }}>
-                        <span style={{marginRight: '10px', fontSize:'14px', color: '#999999'}}>例如：4bf77629-9188-38ca-ac48-d09a09ef451f</span>
+                        <span style={{marginRight: '10px', fontSize:'14px', color: '#999999'}}>例如：89519758-e448-3900-bc12-a680d7a1dc90</span>
                     </div>
                     
                     <Button
@@ -472,21 +529,47 @@ class App  extends React.Component {
                                     message.warning('请选择关系')
                                     return;
                                 }else {
-                                    let argStr = '';
-                                    for(let i = 0; i < selectRela.length; i++){
-                                        argStr = argStr ? `${argStr}|\`${selectRela[i]}\`` : `${argStr}\`${selectRela[i]}\``;
-                                    }
-                                    let str = `MATCH data=(c:caller{name:'${knowValue}'})-[r:案件详情]->(n:appeal_content)-[re:${argStr}]->(nn) return data`;
+                                    let str = this.dealArgStr(knowValue)
                                     this.getKnowMap(str)
                                 }
                             }}
                     >搜索</Button>
 
                 </div>:null}
-                <div id="viz" style={{
-                    width: selectTab == '4' ? '100%' : '0px',
-                    height: selectTab == '4' ? '700px' : '0px',
-                }}></div>
+                <div className="row">
+                    <div style={{
+                        width: '260px',
+                        height: '700px',
+                        marginRight: '20px',
+                        marginLeft:'20px'
+                    }}>
+                        <Table 
+                        dataSource={dataSource} 
+                        bordered 
+                        columns={columns} 
+                        pagination={false}
+                        // scroll={{ y: 640 }}
+                        onRow={record => {
+                            return {
+                                onClick: event => {
+                                    if(!selectRela.length){
+                                        message.warning('请选择关系')
+                                        return;
+                                    }else {
+                                        let str = this.dealArgStr(record.id)
+                                        this.getKnowMap(str)
+                                    }
+                                }
+                            };
+                        }}
+                        />
+                    </div>
+                    <div id="viz" style={{
+                        width: selectTab == '4' ? '900px' : '0px',
+                        height: selectTab == '4' ? '700px' : '0px',
+                    }}></div>
+
+                </div>
             </div>
         )
     }
