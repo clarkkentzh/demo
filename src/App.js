@@ -88,7 +88,7 @@ class App  extends React.Component {
                 '案件类别'
             ],
             tabList: [
-                {id: '1', title: '指数'},
+                {id: '1', title: '数据指数'},
                 {id: '2', title: '案件管理'},
                 {id: '3', title: '智能派单'},
                 {id: '4', title: '知识图谱'},
@@ -366,8 +366,8 @@ class App  extends React.Component {
             <div className="App">
                 <header className="App-header">
                     <div className="header_container">
-                        <img style={{width: '251px',height: '60px', marginLeft: '16px'}} src={require('./img/icon_head.png')} alt="img"/>
-          
+                        {/* <img style={{width: '251px',height: '60px', marginLeft: '16px'}} src={require('./img/icon_head.png')} alt="img"/> */}
+                        <div style={{width: '251px',height: '60px',lineHeight: '60px', fontSize: '30px',fontWeight: '600'}}>演示DEMO</div>
                         <div style={{display:'flex', flexDirection:"row", alignItems:'center',justifyContent:'flex-end'}}>
                             {tabList.map((item,index)=>{
                                 return (
