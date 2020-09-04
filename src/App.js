@@ -222,7 +222,7 @@ class App  extends React.Component {
         }
 
         request({
-            url: 'http://192.168.100.67:6229/schema',
+            url: 'http://172.16.77.107:6229/schema',
             method: 'post',
             data: obj
         }).then((reponse)=>{

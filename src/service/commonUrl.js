@@ -1,4 +1,4 @@
-let url = 'http://192.168.100.67:6221';
+let url = 'http://172.16.77.107:6221';
 export default function getUrl(){
     return url
 }
