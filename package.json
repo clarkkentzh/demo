@@ -8,12 +8,22 @@
     "@testing-library/user-event": "^7.1.2",
     "antd": "^3.26.15",
     "axios": "^0.19.2",
+    "d3": "^3.5.17",
+    "d3-force": "^2.1.1",
+    "d3-react-force": "^1.0.15",
+    "d3-zoom": "^2.0.0",
     "echarts": "^4.7.0",
     "echarts-for-react": "^2.0.15-beta.1",
     "moment": "^2.27.0",
+    "neo4j-driver": "^4.1.2",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "react-scripts": "3.4.1"
+    "react-infinite-scroller": "^1.2.4",
+    "react-redux": "^7.2.1",
+    "react-router-redux": "^4.0.8",
+    "react-scripts": "3.4.1",
+    "redux": "^4.0.5",
+    "save": "^2.4.0"
   },
   "scripts": {
     "start": "cross-env PORT=5000 react-scripts start",
