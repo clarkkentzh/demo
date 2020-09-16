@@ -28,9 +28,9 @@ export class OrderPage extends Component {
 
         this.state = {
             info: "",
-            first_name: "",
-            second_name: "",
-            third_name: "",
+            first_name: "全部",
+            second_name: "全部",
+            third_name: "全部",
             visibleModal: false,
             dataList: {
 
@@ -43,17 +43,17 @@ export class OrderPage extends Component {
         switch (tag) {
             case 1:
                 this.setState({
-                    first_name: value == "全部" ? null : value
+                    first_name: value
                 })
                 break;
             case 2:
                 this.setState({
-                    second_name: value == "全部" ? null : value
+                    second_name: value
                 })
                 break;
             case 3:
                 this.setState({
-                    third_name: value == "全部" ? null : value
+                    third_name: value
                 })
                 break;
             default:
@@ -92,19 +92,19 @@ export class OrderPage extends Component {
                     <div style={{ justifyContent: "space-between", alignItems: 'flex-start', width: '100%', marginTop: '12px' }}>
                         <span className="fl">大类：</span>
                         <Select defaultValue="全部" style={{ width: 200 }} onChange={(value) => { this.handleChange(1, value) }}>
-                            {orderData.first_name.map((key, i) => {
+                            {Object.keys(orderData.class1).map((key, i) => {
                                 return <Option value={key}>{key}</Option>
                             })}
                         </Select>
                         <span className="fl">中类：</span>
                         <Select defaultValue="全部" style={{ width: 200 }} onChange={(value) => { this.handleChange(2, value) }} >
-                            {orderData.second_name.map((key, i) => {
+                            {Object.keys(orderData.class2).map((key, i) => {
                                 return <Option value={key}>{key}</Option>
                             })}
                         </Select>
                         <span className="fl">小类：</span>
                         <Select defaultValue="全部" style={{ width: 200 }} onChange={(value) => { this.handleChange(3, value) }}>
-                            {orderData.third_name.map((key, i) => {
+                            {Object.keys(orderData.class3).map((key, i) => {
                                 return <Option value={key}>{key}</Option>
                             })}
                         </Select>
@@ -156,7 +156,7 @@ export class OrderPage extends Component {
                         </div>
                         {dataList.keyword && dataList.keyword[0] && dataList.keyword[0].add.length ?
                             <div className="keyword_row">
-                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>地址关键词</div>
+                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>实体关键词</div>
                                 <div className="keyword_wrap">
                                     {dataList.keyword[0].add.map((item, index) => {
                                         return (
@@ -168,7 +168,7 @@ export class OrderPage extends Component {
 
                         {dataList.keyword && dataList.keyword[0] && dataList.keyword[0].com.length ?
                             <div className="keyword_row">
-                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>实体关键词</div>
+                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>地址关键词</div>
                                 <div className="keyword_wrap">
                                     {dataList.keyword[0].com.map((item, index) => {
                                         return (
@@ -225,9 +225,9 @@ export class OrderPage extends Component {
             method: 'post',
             data: {
                 query: this.state.info,
-                first_name: this.state.first_name,
-                second_name: this.state.second_name,
-                third_name: this.state.third_name
+                first_name: orderData.class1[this.state.first_name],
+                second_name: orderData.class2[this.state.second_name],
+                third_name: orderData.class3[this.state.third_name]
 
             }
         }).then((reponse) => {
