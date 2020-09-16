@@ -153,7 +153,7 @@ export class NlpPage extends Component {
         var viz = new window.NeoVis.default(config);
         viz.render();
         console.log(viz);
-        // neo4j获取数据转d3js展示
+        // neo4j获取数据转d3js展示1
         var driver = neo4j.driver('bolt://192.168.51.109:7687', neo4j.auth.basic("neo4j", "123456"))
         var session = driver.session()
         try {
