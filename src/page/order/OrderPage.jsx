@@ -211,6 +211,13 @@ export class OrderPage extends Component {
                                     )
                                 })}
                             </div> : null}
+                            {Object.keys(dataList).length ?
+                            <div style={{
+                                marginTop: '20px',
+                                fontSize: '16px',
+                                fontWeight:'bold',
+                                color: dataList.indcate == 1 ? 'green' : 'red'
+                            }}>{dataList.indcate == 1 ? '大于阈值':'小于阈值'}</div>:null}
                     </div>
                 </div>
                 {this.modalRender()}
