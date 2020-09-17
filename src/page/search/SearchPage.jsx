@@ -17,7 +17,7 @@ export class SearchPage extends Component {
     render() {
         const { searchDataList, searchValue } = this.state;
         return (
-            <div className="container">
+            <div className="container_search">
                 <div className="center_top_s">
                     <div className="row">
                         <Input
