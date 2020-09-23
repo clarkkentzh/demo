@@ -156,7 +156,7 @@ export class OrderPage extends Component {
                         </div>
                         {dataList.keyword && dataList.keyword[0] && dataList.keyword[0].add.length ?
                             <div className="keyword_row">
-                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>实体关键词</div>
+                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>地址关键词</div>
                                 <div className="keyword_wrap">
                                     {dataList.keyword[0].add.map((item, index) => {
                                         return (
@@ -168,7 +168,7 @@ export class OrderPage extends Component {
 
                         {dataList.keyword && dataList.keyword[0] && dataList.keyword[0].com.length ?
                             <div className="keyword_row">
-                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>地址关键词</div>
+                                <div style={{ height: '30px', lineHeight: '30px', fontSize: '12px', width: '70px', textAlign: 'left', color: '#858585' }}>实体关键词</div>
                                 <div className="keyword_wrap">
                                     {dataList.keyword[0].com.map((item, index) => {
                                         return (
